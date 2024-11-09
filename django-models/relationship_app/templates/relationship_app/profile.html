@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+</head>
+<body>
+    <h1>{{ profile.user.username }}'s Profile</h1>
+    <p><strong>Bio:</strong> {{ profile.bio }}</p>
+    <p><strong>Location:</strong> {{ profile.location }}</p>
+    <p><strong>Birth Date:</strong> {{ profile.birth_date }}</p>
+    <a href="{% url 'profile_edit' %}">Edit Profile</a>
+</body>
+</html>
