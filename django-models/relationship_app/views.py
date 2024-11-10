@@ -9,6 +9,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -75,6 +76,9 @@ def is_librarian(user):
 def is_member(user):
     return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
 
+def error_page(request):
+    return HttpResponse("You do not have permission to view this page.")
+
 
 # View accessible only to Admins
 @user_passes_test(is_admin)
@@ -92,3 +96,24 @@ def librarian_view(request):
 @user_passes_test(is_member)
 def member_view(request):
     return render(request, 'relationship_app/member_view.html')
+
+
+
+# Custom Permission Logic
+def check_role(role):
+    def has_role(user):
+        return user.is_authenticated and user.profile.role == role
+    return has_role
+
+@user_passes_test(check_role('Admin'), login_url='/error/')
+def admin_view(request):
+    return HttpResponse("Welcome to the Admin Page!")
+
+@user_passes_test(check_role('Librarian'), login_url='/error/')
+def librarian_view(request):
+    return HttpResponse("Welcome to the Librarian Page!")
+
+@user_passes_test(check_role("Member"), login_url='/error/')
+def member_view(request):
+    return HttpResponse("Welcome to the Member Page!")
+

@@ -29,6 +29,11 @@ urlpatterns = [
     path('admin/', views.admin_view, name='admin_view'),
     path('librarian/', views.librarian_view, name='librarian_view'),
     path('member/', views.member_view, name='member_view'),
+
+    path('admin_page/', views.admin_view, name='admin_page'),
+    path('librarian_page/', views.librarian_view, name='librarian_page'),
+    path('member_page/', views.member_view, name='member_page'),
+    path('error/', views.error_page, name='error_page'),
 ]
 
 
