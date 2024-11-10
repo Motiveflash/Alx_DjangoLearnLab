@@ -7,10 +7,12 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth import login
 from django.urls import reverse_lazy
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Profile
+from .models import UserProfile
 from .forms import ProfileForm
 
 # Create your views here.
@@ -44,17 +46,49 @@ def register(request):
 
 @login_required
 def profile_view(request):
-    profile = request.user.profile
-    return render(request, "profile.html", {"profile": profile})
+    profile = request.user.user_profile
+    context = {"profile": profile}
+    return render(request, "profile.html", context)
 
 @login_required
 def profile_edit_view(request):
     if request.method == "POST":
-        form = ProfileForm(request.POST, instance=request.user.profile)
+        form = ProfileForm(request.POST, instance=request.user.user_profile)
         if form.is_valid():
             form.save()
             messages.success(request, "Profile updated successfully.")
             return redirect("profile")
     else:
-        form = ProfileForm(instance=request.user.profile)
+        form = ProfileForm(instance=request.user.user_profile)
     return render(request, "profile_edit.html", {"form": form})
+
+
+# Check if user is an admin
+def is_admin(user):
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Admin'
+
+# Check if user is a librarian
+def is_librarian(user):
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Librarian'
+
+# Check if user is a member
+def is_member(user):
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
+
+
+# View accessible only to Admins
+@user_passes_test(is_admin)
+def admin_view(request):
+    return render(request, 'relationship_app/admin_view.html')
+
+
+# View accessible only to Librarians
+@user_passes_test(is_librarian)
+def librarian_view(request):
+    return render(request, 'relationship_app/librarian_view.html')
+
+
+# View accessible only to Members
+@user_passes_test(is_member)
+def member_view(request):
+    return render(request, 'relationship_app/member_view.html')
