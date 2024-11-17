@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Book</title>
+</head>
+<body>
+    <h1>Create New Book</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label>Title:</label>
+        <input type="text" name="title" required><br>
+        <label>Author:</label>
+        <input type="text" name="author" required><br>
+        <label>Published Date:</label>
+        <input type="date" name="published_date" required><br>
+        <button type="submit">Save</button>
+    </form>
+    <a href="{% url 'list_books' %}">Back to List</a>
+</body>
+</html>
