@@ -28,13 +28,28 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'True'
+DEBUG = 'False'
 
+# Allowed hosts - replace with your domain or server IP
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
 ]
 
+# Browser-side protections
+SECURE_BROWSER_XSS_FILTER = True  # Helps protect against cross-site scripting attacks
+
+X_FRAME_OPTIONS = 'DENY'  # Prevents your site from being embedded in iframes
+
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevents MIME type sniffing by browsers
+
+# Enforce HTTPS
+CSRF_COOKIE_SECURE = True  # Ensures CSRF cookies are only sent over HTTPS
+
+SESSION_COOKIE_SECURE = True  # Ensures session cookies are only sent over HTTPS
+
+# CSP configurations
+CSP_DEFAULT_SRC = ("'self'",)  # Only allow resources from this site
 
 # Application definition
 
@@ -47,6 +62,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'csp',
 ]
 
 MIDDLEWARE = [
@@ -57,7 +73,17 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware',
 ]
+
+# Content Security Policy settings for development
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "http://localhost:8000", "http://127.0.0.1:8000")
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "http://localhost:8000", "http://127.0.0.1:8000")
+CSP_IMG_SRC = ("'self'", "data:")
+CSP_FONT_SRC = ("'self'", "data:")
+CSP_CONNECT_SRC = ("'self'", "ws://localhost:8000")  # Allow WebSocket connections
+CSP_FRAME_SRC = ("'self'",)
 
 ROOT_URLCONF = 'LibraryProject.urls'
 
