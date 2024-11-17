@@ -10,7 +10,7 @@ class ProfileForm(forms.ModelForm):
 class BookForm(forms.ModelForm):
     class Meta:
         model = Book
-        fields = ['title', 'author', 'published_date']
+        fields = ['title', 'author', 'publication_date']
         widgets = {
-            'published_date': forms.DateInput(attrs={'type': 'date'}),
+            'publication_date': forms.DateInput(attrs={'type': 'date'}),
         }
