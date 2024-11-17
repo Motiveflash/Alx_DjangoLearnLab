@@ -51,6 +51,35 @@ SESSION_COOKIE_SECURE = True  # Ensures session cookies are only sent over HTTPS
 # CSP configurations
 CSP_DEFAULT_SRC = ("'self'",)  # Only allow resources from this site
 
+
+# SECURITY SETTINGS FOR HTTPS AND SECURE COOKIES
+
+# SECURE_SSL_REDIRECT: This setting ensures that all non-HTTPS requests are redirected to HTTPS.
+SECURE_SSL_REDIRECT = True #Set it to True to enforce HTTPS.
+
+# SECURE_HSTS_SECONDS: This setting tells browsers to only access the site via HTTPS for the specified number of seconds. It's a strong security measure.
+SECURE_HSTS_SECONDS = 31536000 # (one year) to enforce the use of HTTPS for a long period.
+
+# ECURE_HSTS_INCLUDE_SUBDOMAINS: When this is set to True, all subdomains of your site will also be forced to use HTTPS.
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+# SECURE_HSTS_PRELOAD: Set this to True if you want your domain to be eligible for the HTTP Strict Transport Security (HSTS) preload list.
+# Important: Only set this to True if you are absolutely sure that you want to use HSTS and you have configured it correctly for all your subdomains.
+SECURE_HSTS_PRELOAD = True
+
+# Cookies security
+SESSION_COOKIE_SECURE = True  # Send session cookies only over HTTPS
+CSRF_COOKIE_SECURE = True  # Send CSRF cookies only over HTTPS
+
+# Additional security headers
+X_FRAME_OPTIONS = 'DENY'  # Prevent clickjacking by denying iframe embedding
+# TTP_X_FORWARDED_PROTO: This is the header added by your proxy (e.g., Nginx, Apache, or a load balancer) to indicate the original protocol (http or https) used by the client.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') # ["SECURE_PROXY_SSL_HEADER", "HTTP_X_FORWARDED_PROTO"]
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent MIME type sniffing
+SECURE_BROWSER_XSS_FILTER = True  # Enable browser's XSS protection
+
+
+
 # Application definition
 
 INSTALLED_APPS = [
