@@ -1,5 +1,14 @@
-<form method="post" action="{% url 'submit_form' %}">
-    {% csrf_token %}
-    <input type="text" name="name" placeholder="Enter Name">
-    <button type="submit">Submit</button>
-</form>
+{% extends "blog/base.html" %}
+{% block content %}
+    {% for book in books %}
+        <article class="media content-section">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2" href="#">{{ book.author }}</a>
+                    <small class="text-muted">{{ book.publication_date|date:"F d, Y" }}</small>
+                </div>
+                <h2><a class="article-title" href="#">{{ book.title }}</a></h2>
+            </div>
+        </article>
+    {% endfor %}
+{% endblock content %}
