@@ -14,130 +14,82 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# Load environment variables from the .env file
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+# BASE_DIR represents the root directory of your Django project.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key')
+# Using os.getenv ensures you can store the secret key securely in a .env file.
+SECRET_KEY = os.getenv('SECRET_KEY', 'default-secret-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'False'
+# DEBUG should be set to False in a production environment for security.
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-# Allowed hosts - replace with your domain or server IP
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-]
-
-# Browser-side protections
-SECURE_BROWSER_XSS_FILTER = True  # Helps protect against cross-site scripting attacks
-
-X_FRAME_OPTIONS = 'DENY'  # Prevents your site from being embedded in iframes
-
-SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevents MIME type sniffing by browsers
-
-# Enforce HTTPS
-CSRF_COOKIE_SECURE = True  # Ensures CSRF cookies are only sent over HTTPS
-
-SESSION_COOKIE_SECURE = True  # Ensures session cookies are only sent over HTTPS
-
-# CSP configurations
-CSP_DEFAULT_SRC = ("'self'",)  # Only allow resources from this site
-
-
-# SECURITY SETTINGS FOR HTTPS AND SECURE COOKIES
-
-# SECURE_SSL_REDIRECT: This setting ensures that all non-HTTPS requests are redirected to HTTPS.
-SECURE_SSL_REDIRECT = True #Set it to True to enforce HTTPS.
-
-# SECURE_HSTS_SECONDS: This setting tells browsers to only access the site via HTTPS for the specified number of seconds. It's a strong security measure.
-SECURE_HSTS_SECONDS = 31536000 # (one year) to enforce the use of HTTPS for a long period.
-
-# ECURE_HSTS_INCLUDE_SUBDOMAINS: When this is set to True, all subdomains of your site will also be forced to use HTTPS.
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-
-# SECURE_HSTS_PRELOAD: Set this to True if you want your domain to be eligible for the HTTP Strict Transport Security (HSTS) preload list.
-# Important: Only set this to True if you are absolutely sure that you want to use HSTS and you have configured it correctly for all your subdomains.
-SECURE_HSTS_PRELOAD = True
-
-# Cookies security
-SESSION_COOKIE_SECURE = True  # Send session cookies only over HTTPS
-CSRF_COOKIE_SECURE = True  # Send CSRF cookies only over HTTPS
-
-# Additional security headers
-X_FRAME_OPTIONS = 'DENY'  # Prevent clickjacking by denying iframe embedding
-# TTP_X_FORWARDED_PROTO: This is the header added by your proxy (e.g., Nginx, Apache, or a load balancer) to indicate the original protocol (http or https) used by the client.
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') # ["SECURE_PROXY_SSL_HEADER", "HTTP_X_FORWARDED_PROTO"]
-SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent MIME type sniffing
-SECURE_BROWSER_XSS_FILTER = True  # Enable browser's XSS protection
-
-
+# Allowed hosts define which domain names or IPs are valid for your application.
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost'] if DEBUG else ['your-production-domain.com']
 
 # Application definition
-
+# This section specifies all installed applications, including built-in Django apps
+# and custom apps you create for your project.
 INSTALLED_APPS = [
-    'bookshelf.apps.BookshelfConfig',
-    'relationship_app.apps.RelationshipAppConfig',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'csp',
+    'bookshelf.apps.BookshelfConfig',  
+    'relationship_app.apps.RelationshipAppConfig',  
+    'django.contrib.admin',  
+    'django.contrib.auth',  
+    'django.contrib.contenttypes',  
+    'django.contrib.sessions',  
+    'django.contrib.messages',  
+    'django.contrib.staticfiles', 
+    'bootstrap5',
+    'csp',  # Content Security Policy middleware
 ]
 
+# Middleware provides hooks for processing requests and responses.
+# Each middleware runs in the order listed.
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'csp.middleware.CSPMiddleware',
+    'django.middleware.security.SecurityMiddleware',  
+    'django.contrib.sessions.middleware.SessionMiddleware',  
+    'django.middleware.common.CommonMiddleware',  
+    'django.middleware.csrf.CsrfViewMiddleware',  
+    'django.contrib.auth.middleware.AuthenticationMiddleware',  
+    'django.contrib.messages.middleware.MessageMiddleware',  
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',  
+    'csp.middleware.CSPMiddleware',  # Enforces Content Security Policy
 ]
 
-# Content Security Policy settings for development
-CSP_DEFAULT_SRC = ("'self'",)
-CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "http://localhost:8000", "http://127.0.0.1:8000")
-CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "http://localhost:8000", "http://127.0.0.1:8000")
-CSP_IMG_SRC = ("'self'", "data:")
-CSP_FONT_SRC = ("'self'", "data:")
-CSP_CONNECT_SRC = ("'self'", "ws://localhost:8000")  # Allow WebSocket connections
-CSP_FRAME_SRC = ("'self'",)
-
+# ROOT_URLCONF defines the module where URL configurations are stored.
 ROOT_URLCONF = 'LibraryProject.urls'
 
+# TEMPLATES defines how Django processes and renders templates.
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Add custom template directory
-        'APP_DIRS': True,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  
+        'APP_DIRS': True, 
         'OPTIONS': {
             'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.debug',  # Debug variables
+                'django.template.context_processors.request',  # Add request to templates
+                'django.contrib.auth.context_processors.auth',  # Authentication variables
+                'django.contrib.messages.context_processors.messages',  # Messages framework variables
             ],
         },
     },
 ]
 
+# WSGI_APPLICATION specifies the WSGI application callable.
 WSGI_APPLICATION = 'LibraryProject.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
+# Default database using SQLite. Can be replaced with PostgreSQL, MySQL, etc., for production.
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -145,56 +97,67 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
+# Validators enforce strong password policies.
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        'OPTIONS': {
-            'min_length': 8,  # Enforce a minimum password length
-        },
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', 'OPTIONS': {'min_length': 8}},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_TZ = True
-
+LANGUAGE_CODE = 'en-us'  # Default language for your project
+TIME_ZONE = 'UTC'  # Timezone for your project
+USE_I18N = True  # Enables Django’s internationalization system
+USE_TZ = True  # Enables timezone support
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-STATIC_URL = 'static/'
-
-
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+# URL for accessing static files
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'  # Default type for auto-increment fields
 
 # Custom user model
+# Define your custom user model if you need additional fields or behavior.
 AUTH_USER_MODEL = 'bookshelf.CustomUser'
 
 # Login and logout redirection
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/'  # Redirect to homepage after login
+LOGOUT_REDIRECT_URL = '/'  # Redirect to homepage after logout
+
+# Security settings
+if DEBUG:
+    # Development settings
+    SECURE_SSL_REDIRECT = False  # HTTPS not enforced in development
+    CSRF_COOKIE_SECURE = False  # CSRF cookies sent over HTTP in development
+    SESSION_COOKIE_SECURE = False  # Session cookies sent over HTTP in development
+    SECURE_HSTS_SECONDS = 0  # HSTS disabled in development
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+    SECURE_HSTS_PRELOAD = False
+else:
+    # Production settings
+    SECURE_SSL_REDIRECT = True  # Enforce HTTPS in production
+    CSRF_COOKIE_SECURE = True  # Send CSRF cookies only over HTTPS
+    SESSION_COOKIE_SECURE = True  # Send session cookies only over HTTPS
+    SECURE_HSTS_SECONDS = 31536000  # HSTS enabled for one year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Enforce HSTS for subdomains
+    SECURE_HSTS_PRELOAD = True  # Enable inclusion in HSTS preload list
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # Header for HTTPS behind proxies
+
+# Content Security Policy (CSP) settings
+# Adds a layer of security by restricting the sources of resources the browser can load.
+CSP_DEFAULT_SRC = ("'self'",)  # Allow resources only from the current site
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "http://localhost:8000", "http://127.0.0.1:8000") if DEBUG else ("'self'",)
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "http://localhost:8000", "http://127.0.0.1:8000") if DEBUG else ("'self'",)
+CSP_IMG_SRC = ("'self'", "data:")  # Allow images from the current site or as base64 data URIs
+CSP_FONT_SRC = ("'self'", "data:")  # Allow fonts from the current site or as base64 data URIs
+CSP_CONNECT_SRC = ("'self'", "ws://localhost:8000") if DEBUG else ("'self'",)  # Allow WebSocket connections in dev
+CSP_FRAME_SRC = ("'self'",)  # Restrict iframes to the same origin

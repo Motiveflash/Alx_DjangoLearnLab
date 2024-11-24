@@ -1,6 +1,7 @@
 
-env
+env/
 .env
+apienv/
 __pycache__/
 *.py[cod]
 *$py.class

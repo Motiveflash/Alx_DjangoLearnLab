@@ -10,12 +10,12 @@ def search_books(request):
     if form.is_valid():
         query = form.cleaned_data['query']
         books = Book.objects.filter(title__icontains=query)  # Safe query using ORM
-    return render(request, 'bookshelf/search_results.html', {'form': form, 'books': books})
+    return render(request, 'bookshelf/search-results.html', {'form': form, 'books': books})
 
 @permission_required('books.can_view', raise_exception=True)
 def book_list(request):
     books = Book.objects.all()
-    return render(request, 'books/list_books.html', {'books': books})
+    return render(request, 'bookshelf/book-list.html', {'books': books})
 
 @permission_required('books.can_create', raise_exception=True)
 def create_book(request):
@@ -27,7 +27,7 @@ def create_book(request):
         if title and author and published_date:
             Book.objects.create(title=title, author=author, published_date=published_date)
             return redirect('list_books')  # Redirect to the list_books view
-    return render(request, 'books/create_book.html')
+    return render(request, 'bookshelf/create-book.html')
 
 @permission_required('books.can_edit', raise_exception=True)
 def edit_book(request, book_id):
@@ -38,7 +38,7 @@ def edit_book(request, book_id):
         book.published_date = request.POST.get('published_date')
         book.save()
         return redirect('list_books')  # Redirect to the list_books view
-    return render(request, 'books/edit_book.html', {'book': book})
+    return render(request, 'bookshelf/edit-book.html', {'book': book})
 
 @permission_required('books.can_delete', raise_exception=True)
 def delete_book(request, book_id):
@@ -46,4 +46,4 @@ def delete_book(request, book_id):
     if request.method == 'POST':
         book.delete()
         return redirect('list_books')  # Redirect to the list_books view
-    return render(request, 'books/delete_book.html', {'book': book})
+    return render(request, 'bookshelf/delete-book.html', {'book': book})

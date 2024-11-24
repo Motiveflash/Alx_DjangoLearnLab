@@ -62,7 +62,7 @@ The Library Management System is a web-based application developed using Django.
 ### **Steps**
 1. Clone the repository.
    ```bash
-   git clone <repository_url>
+   git clone https://github.com/Motiveflash/Alx_DjangoLearnLab.git
    cd LibraryProject
    ```
 2. Install dependencies.
@@ -180,5 +180,6 @@ For production deployment:
 ## **Acknowledgments**
 - Django Documentation: [docs.djangoproject.com](https://docs.djangoproject.com)
 - Community contributions and open-source libraries.
+- Alx Student Community contributions.
 
 ---
