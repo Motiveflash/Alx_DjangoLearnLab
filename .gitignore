@@ -1,6 +1,8 @@
 
 env/
 .env
+advancedApienv/
+apienv
 apienv/
 __pycache__/
 *.py[cod]
