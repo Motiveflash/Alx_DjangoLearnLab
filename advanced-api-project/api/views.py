@@ -1,8 +1,8 @@
 from django_filters import rest_framework as filters
-from rest_framework import generics, permissions, DjangoFilterBackend
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
-  # For advanced filtering
 from .models import Book
 from .serializers import BookSerializer
 
@@ -13,6 +13,7 @@ class BookGenericAPIView(generics.GenericAPIView):
     - Permission checks
     - Filtering, searching, and ordering
     """
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
 
     # Define the queryset to fetch all Book objects
     queryset = Book.objects.all()
@@ -24,7 +25,7 @@ class BookGenericAPIView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     # Filtering and ordering backends
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filter_backends = [filters.DjangoFilterBackend, SearchFilter, OrderingFilter]
 
     # Specify filterable fields (exact matches)
     filterset_fields = ['publication_year', 'author__name']
