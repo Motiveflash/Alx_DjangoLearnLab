@@ -1,9 +1,10 @@
-from django_filters import rest_framework as filters
+
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from rest_framework import generics, permissions
+from django_filters import rest_framework as filters
+from rest_framework import generics
 from rest_framework.response import Response
-from rest_framework.filters import SearchFilter, OrderingFilter
+
 from .models import Book
 from .serializers import BookSerializer
 
@@ -26,7 +27,7 @@ class BookGenericAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     # Filtering and ordering backends
-    filter_backends = [filters.DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filter_backends = [filters.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
 
     # Specify filterable fields (exact matches)
     filterset_fields = ['publication_year', 'author__name']
@@ -54,12 +55,16 @@ class BookGenericAPIView(generics.GenericAPIView):
 
 class BookListView(generics.ListAPIView):
     """
-    API view to retrieve a list of books.
-    - Allows read-only access for unauthenticated users.
+    API view to list books with filtering, searching, and ordering functionalities.
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]  # Alow read only
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [filters.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['title', 'author__name', 'publication_year']  # Filtering fields
+    search_fields = ['title', 'author__name']  # Searchable fields
+    ordering_fields = ['title', 'publication_year']  # Ordering fields
+    ordering = ['title']  # Default ordering
 
 
 class BookDetailView(generics.RetrieveAPIView):
@@ -69,7 +74,7 @@ class BookDetailView(generics.RetrieveAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.AllowAny]  # Unrestricted access
+    permission_classes = [IsAuthenticatedOrReadOnly]  
 
 
 class BookCreateView(generics.CreateAPIView):
