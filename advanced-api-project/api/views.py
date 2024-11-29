@@ -1,8 +1,8 @@
-
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from django_filters import rest_framework as filters
 from rest_framework import generics
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
 
 from .models import Book
@@ -15,56 +15,70 @@ class BookGenericAPIView(generics.GenericAPIView):
     - Permission checks
     - Filtering, searching, and ordering
     """
+    # Define authentication mechanisms
     authentication_classes = [SessionAuthentication, TokenAuthentication]
 
-    # Define the queryset to fetch all Book objects
+    # Specify the queryset
     queryset = Book.objects.all()
 
-    # Specify the serializer class
+    # Define the serializer class
     serializer_class = BookSerializer
 
-    # Add permissions to restrict access to authenticated users only
+    # Permission classes
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    # Filtering and ordering backends
-    filter_backends = [filters.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    # Backends for filtering, searching, and ordering
+    filter_backends = [filters.DjangoFilterBackend, SearchFilter, OrderingFilter]
 
-    # Specify filterable fields (exact matches)
+    # Fields to allow exact-match filtering
     filterset_fields = ['publication_year', 'author__name']
 
-
-    # Enable search on specific fields
+    # Fields to allow searching
     search_fields = ['title', 'author__name']
 
-    # Enable ordering on specific fields
+    # Fields to allow ordering
     ordering_fields = ['title', 'publication_year']
 
     def get(self, request, *args, **kwargs):
         """
-        Handle GET requests to retrieve a filtered list of books.
+        Handle GET requests to retrieve a list of books.
 
-        - Applies filters, search, and ordering.
-        - Ensures only authenticated users can access this endpoint.
+        Features:
+        - Applies filtering, searching, and ordering
+        - Returns serialized data
         """
-        books = self.filter_queryset(self.get_queryset())  # Apply filters
-        serializer = self.get_serializer(books, many=True)  # Serialize the queryset
-        return Response(serializer.data)  # Return the serialized data as a response
+        # Apply filtering, searching, and ordering to the queryset
+        books = self.filter_queryset(self.get_queryset())
 
+        # Serialize the filtered queryset
+        serializer = self.get_serializer(books, many=True)
 
+        # Return the serialized data in the response
+        return Response(serializer.data)
 
 
 class BookListView(generics.ListAPIView):
     """
-    API view to list books with filtering, searching, and ordering functionalities.
+    API view to list books with support for filtering, searching, and ordering.
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-    filter_backends = [filters.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['title', 'author__name', 'publication_year']  # Filtering fields
-    search_fields = ['title', 'author__name']  # Searchable fields
-    ordering_fields = ['title', 'publication_year']  # Ordering fields
-    ordering = ['title']  # Default ordering
+
+    # Filtering, searching, and ordering backends
+    filter_backends = [filters.DjangoFilterBackend, SearchFilter, OrderingFilter]
+
+    # Fields available for filtering
+    filterset_fields = ['title', 'author__name', 'publication_year']
+
+    # Fields available for searching
+    search_fields = ['title', 'author__name']
+
+    # Fields available for ordering
+    ordering_fields = ['title', 'publication_year']
+
+    # Default ordering
+    ordering = ['title']
 
 
 class BookDetailView(generics.RetrieveAPIView):
@@ -74,7 +88,7 @@ class BookDetailView(generics.RetrieveAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]  
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class BookCreateView(generics.CreateAPIView):
