@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Django Blog{% endblock %}
+
+{% block content %}
+    <h2>Latest Blog Posts</h2>
+    <div class="post-list">
+        {% for post in posts %}
+            <div class="post-item">
+                <h3><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h3>
+                <p class="post-meta">Published on {{ post.published_date|date:"F j, Y" }} by {{ post.author.username }}</p>
+                <p>{{ post.content|truncatewords:30 }}</p>
+                <a href="{% url 'post_detail' post.id %}">Read more...</a>
+            </div>
+        {% empty %}
+            <p>No posts available at the moment.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

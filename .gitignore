@@ -1,5 +1,6 @@
 
 env/
+blog-env/
 .env
 advancedApienv/
 apienv

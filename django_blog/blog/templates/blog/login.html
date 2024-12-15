@@ -3,19 +3,22 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<h1>Login</h1>
+<div class="auth-container">
+    <form method="post">
+        {% csrf_token %}
+        <h1>Login</h1>
 
-{% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-            <li class="{{ message.tags }}">{{ message }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-</form>
+        {{ form.as_p }}
+
+        <button type="submit">Login</button>
+    </form>
+</div>
 {% endblock %}
