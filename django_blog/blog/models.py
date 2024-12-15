@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.core.exceptions import ValidationError
+from django.utils import timezone  # If you want to use timezone in save method
 
 # Model for tags
 class Tag(models.Model):
@@ -19,9 +20,16 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag)
 
+    def save(self, *args, **kwargs):
+        if self.published_date and not self.id:  # Automatically set published_date
+            self.published_date = timezone.now()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.title
 
+    class Meta:
+        ordering = ['-created_at']
 
 # Model for comments on blog posts
 class Comment(models.Model):
