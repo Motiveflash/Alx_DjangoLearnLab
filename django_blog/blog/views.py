@@ -208,7 +208,18 @@ class PostUpdateView(UpdateView):
         post.save()
         form.save_m2m()  # Save the many-to-many relationship (tags)
         return redirect('post-detail', pk=post.pk)
-    
+class PostByTagListView(ListView):
+    model = Post
+    template_name = 'post_by_tag_list.html'  # Define the template to display posts by tag
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        # Get the tag slug from the URL parameter
+        tag_slug = self.kwargs['tag_slug']
+        # Use the tag slug to filter the posts
+        tag = Tag.objects.get(slug=tag_slug)
+        return Post.objects.filter(tags=tag)
+  
 def tag_filter(request, tag_name):
     tag = Tag.objects.get(name=tag_name)
     posts = tag.posts.all()

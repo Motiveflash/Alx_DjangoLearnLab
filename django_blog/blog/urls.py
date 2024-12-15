@@ -28,4 +28,7 @@ urlpatterns = [
     
     path('search/', views.search, name='search'),
     path('tag/<str:tag_name>/', views.tag_filter, name='tag-detail'),
+    
+    # Add the URL pattern for filtering posts by tags
+    path('tags/<slug:tag_slug>/', views.PostByTagListView.as_view(), name='post_by_tag'),
 ]
