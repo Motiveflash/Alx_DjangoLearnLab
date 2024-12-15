@@ -27,8 +27,10 @@ class CommentForm(forms.ModelForm):
         self.fields['content'].widget.attrs.update({'placeholder': 'Write your comment here...'})
         
 class PostForm(forms.ModelForm):
-    tags = TagField(required=False)
-
     class Meta:
         model = Post
-        fields = ['title', 'content', 'tags']
+        fields = ['title', 'content']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter post title'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Write your post content here'}),
+        }
