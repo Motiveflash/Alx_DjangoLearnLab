@@ -14,11 +14,13 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     
     # Blog Post CRUD Views
-    path('post/<int:pk>/', views.PostDetailView.as_view(), name='post-detail'),
-    path('post/new/', views.PostCreateView.as_view(), name='post-create'),
-    path('post/<int:pk>/update/', views.PostUpdateView.as_view(), name='post-update'),
-    path('post/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post-delete'),
-     path('posts/<int:pk>/', views.post_detail, name='post-detail'),
-    path('posts/<int:post_pk>/comments/edit/<int:pk>/', views.CommentUpdateView.as_view(), name='comment-edit'),
-    path('posts/<int:post_pk>/comments/delete/<int:pk>/', views.CommentDeleteView.as_view(), name='comment-delete'),
+    path('post/<int:pk>/', views.PostDetailView.as_view(), name='post-detail'),  # View single post
+    path('post/new/', views.PostCreateView.as_view(), name='post-create'),  # Create new post
+    path('post/<int:pk>/update/', views.PostUpdateView.as_view(), name='post-update'),  # Edit post
+    path('post/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post-delete'),  # Delete post
+    
+    # Comment CRUD Views
+    path('post/<int:pk>/comment/new/', views.CommentCreateView.as_view(), name='comment-create'),  # Create comment
+    path('comment/<int:pk>/edit/', views.CommentUpdateView.as_view(), name='comment-edit'),  # Edit comment
+    path('comment/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment-delete'),  # Delete comment
 ]

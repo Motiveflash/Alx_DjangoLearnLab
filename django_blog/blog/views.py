@@ -8,7 +8,7 @@ from .models import Post, Comment
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
-from django.utils import timezone  
+from django.utils import timezone  # Import timezone to handle updated_at field
 
 
 # Register View - User Registration
@@ -135,6 +135,22 @@ def post_detail(request, pk):
         form = CommentForm()
 
     return render(request, 'blog/post_detail.html', {'post': post, 'comments': comments, 'form': form})
+
+# CommentCreateView - Class-based view to create a new comment
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'
+
+    def form_valid(self, form):
+        post = get_object_or_404(Post, pk=self.kwargs['pk'])
+        form.instance.post = post
+        form.instance.author = self.request.user  # Set the logged-in user as the author
+        messages.success(self.request, 'Your comment has been added!')
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
 
 # Edit Comment View
 class CommentUpdateView(LoginRequiredMixin, UpdateView):
