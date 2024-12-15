@@ -187,6 +187,173 @@ header nav ul li a:hover {
     color: #333;
     line-height: 1.6;
 }
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Container to hold main content */
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+/* Styling for the post */
+h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.post-content {
+    margin-bottom: 40px;
+    font-size: 1.2rem;
+}
+
+/* Comment section styling */
+.comment-section {
+    margin-top: 40px;
+}
+
+.comment-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #444;
+}
+
+/* List of comments */
+ul.comments {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+ul.comments li {
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+}
+
+ul.comments li strong {
+    color: #0056b3;
+    font-weight: bold;
+}
+
+ul.comments li p {
+    margin-top: 5px;
+    font-size: 1rem;
+}
+
+/* Styling for comment edit and delete links */
+.comment-actions {
+    margin-top: 10px;
+}
+
+.comment-actions a {
+    margin-right: 10px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.comment-actions a:hover {
+    text-decoration: underline;
+}
+
+/* Form styling for adding/editing comments */
+.comment-form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.comment-form input[type="text"], .comment-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 1rem;
+}
+
+.comment-form button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.comment-form button:hover {
+    background-color: #0056b3;
+}
+
+/* Edit comment form styling */
+.comment-edit-form {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.comment-edit-form button {
+    background-color: #28a745;
+}
+
+.comment-edit-form button:hover {
+    background-color: #218838;
+}
+
+/* Delete comment confirmation */
+.comment-delete-confirm {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.comment-delete-confirm button {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.comment-delete-confirm button:hover {
+    background-color: #c82333;
+}
+
+/* Success and error messages */
+.messages {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #d4edda;
+    color: #155724;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.messages.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.messages.success {
+    background-color: #c3e6cb;
+    color: #155724;
+}
+
 
 
 /* Form Styles */

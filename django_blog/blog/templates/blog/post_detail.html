@@ -12,5 +12,32 @@
             <a href="{% url 'post-delete' post.pk %}" class="btn btn-danger">Delete</a>
         </div>
     {% endif %}
+    <h2>{{ post.title }}</h2>
+    <p>{{ post.content }}</p>
+
+    <h3>Comments:</h3>
+    {% if comments %}
+        <ul>
+            {% for comment in comments %}
+                <li>
+                    <strong>{{ comment.author }}</strong>: {{ comment.content }} 
+                    {% if comment.author == user %}
+                        <a href="{% url 'comment-edit' comment.pk %}">Edit</a> |
+                        <a href="{% url 'comment-delete' comment.pk %}">Delete</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No comments yet.</p>
+    {% endif %}
+
+    <h3>Add a Comment:</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit Comment</button>
+    </form>
+
     <a href="{% url 'post-list' %}" class="btn btn-link">Back to all posts</a>
 {% endblock %}
