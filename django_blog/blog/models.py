@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.utils import timezone  # If you want to use timezone in save method
+from django.utils import timezone 
+from taggit.managers import TaggableManager
 
 # Model for tags
 class Tag(models.Model):
@@ -18,7 +19,7 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     published_date = models.DateTimeField(null=True, blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    tags = models.ManyToManyField('Tag', related_name='posts', blank=True)
+    tags = TaggableManager() 
 
     def save(self, *args, **kwargs):
         if self.published_date and not self.id:  # Automatically set published_date

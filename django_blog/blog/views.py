@@ -215,12 +215,9 @@ def tag_filter(request, tag_name):
     return render(request, 'blog/tag_filter.html', {'tag': tag, 'posts': posts})
     
 def search(request):
-    query = request.GET.get('q')
-    posts = Post.objects.all()
-    if query:
-        posts = posts.filter(
-            Q(title__icontains=query) | 
-            Q(content__icontains=query) | 
-            Q(tags__name__icontains=query)
-        ).distinct()  # Remove duplicate posts if they match on multiple fields
-    return render(request, 'blog/search_results.html', {'posts': posts, 'query': query})
+    query = request.GET.get('q', '')
+    posts = Post.objects.filter(
+        Q(title__icontains=query) | Q(content__icontains=query) |
+        Q(tags__name__icontains=query)
+    ).distinct()  # Distinct ensures no duplicates if a post has multiple matching tags
+    return render(request, 'search_results.html', {'posts': posts, 'query': query})
