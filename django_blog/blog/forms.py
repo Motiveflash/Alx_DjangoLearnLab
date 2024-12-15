@@ -27,8 +27,13 @@ class CommentForm(forms.ModelForm):
         self.fields['content'].widget.attrs.update({'placeholder': 'Write your comment here...'})
         
 class PostForm(forms.ModelForm):
-    tags = TagField(widget=TagWidget(), required=False) 
+    tags = TagField(required=False) 
 
     class Meta:
         model = Post
         fields = ['title', 'content', 'tags'] 
+
+    # Define the widgets for each field, including the 'tags' field
+    widgets = {
+        'tags': TagWidget(),  # Use TagWidget to render the tags field
+    }
