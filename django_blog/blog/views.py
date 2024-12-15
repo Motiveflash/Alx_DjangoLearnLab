@@ -3,12 +3,13 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import CustomUserCreationForm, ProfileUpdateForm, CommentForm
-from .models import Post, Comment
+from .forms import CustomUserCreationForm, ProfileUpdateForm, CommentForm, PostForm
+from .models import Post, Comment, Tag
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
-from django.utils import timezone  # Import timezone to handle updated_at field
+from django.utils import timezone
+from django.db.models import Q
 
 
 # Register View - User Registration
@@ -182,3 +183,44 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, 'Your comment has been deleted!')
         return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
+
+
+class PostCreateView(CreateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'blog/post_form.html'
+
+    def form_valid(self, form):
+        post = form.save(commit=False)
+        post.author = self.request.user
+        post.save()
+        form.save_m2m()  # Save the many-to-many relationship (tags)
+        return redirect('post-detail', pk=post.pk)
+
+class PostUpdateView(UpdateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'blog/post_form.html'
+
+    def form_valid(self, form):
+        post = form.save(commit=False)
+        post.author = self.request.user
+        post.save()
+        form.save_m2m()  # Save the many-to-many relationship (tags)
+        return redirect('post-detail', pk=post.pk)
+    
+def tag_filter(request, tag_name):
+    tag = Tag.objects.get(name=tag_name)
+    posts = tag.posts.all()
+    return render(request, 'blog/tag_filter.html', {'tag': tag, 'posts': posts})
+    
+def search(request):
+    query = request.GET.get('q')
+    posts = Post.objects.all()
+    if query:
+        posts = posts.filter(
+            Q(title__icontains=query) | 
+            Q(content__icontains=query) | 
+            Q(tags__name__icontains=query)
+        ).distinct()  # Remove duplicate posts if they match on multiple fields
+    return render(request, 'blog/search_results.html', {'posts': posts, 'query': query})

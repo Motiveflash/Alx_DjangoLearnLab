@@ -18,7 +18,7 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     published_date = models.DateTimeField(null=True, blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField('Tag', related_name='posts', blank=True)
 
     def save(self, *args, **kwargs):
         if self.published_date and not self.id:  # Automatically set published_date

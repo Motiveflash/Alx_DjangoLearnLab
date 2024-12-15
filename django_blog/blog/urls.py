@@ -5,7 +5,9 @@ from . import views
 urlpatterns = [
     # Home page for blog (ListView of posts)
     path('', views.PostListView.as_view(), name='post-list'),  # List of posts at root
-    path('home/', views.home, name='home'),  # Optional home view, if you want a specific page for home
+    
+    path('home/', views.home, name='home'),  
+    
     
     # Authentication
     path('login/', views.user_login, name='login'),
@@ -23,4 +25,7 @@ urlpatterns = [
     path('post/<int:pk>/comment/new/', views.CommentCreateView.as_view(), name='comment-create'),  # Create comment
     path('comment/<int:pk>/edit/', views.CommentUpdateView.as_view(), name='comment-edit'),  # Edit comment
     path('comment/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment-delete'),  # Delete comment
+    
+    path('search/', views.search, name='search'),
+    path('tag/<str:tag_name>/', views.tag_filter, name='tag-detail'),
 ]
