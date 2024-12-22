@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
-{% block title %}{{ view.action }} Post{% endblock %}
+{% block title %}Create Post{% endblock %}
+
 {% block content %}
-    <h1 class="page-title">{{ view.action }} Post</h1>
-    <form method="post" class="form">
+    <h1 class="page-title">Create Post</h1>
+    <form method="post" class="form" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="btn btn-success">Submit</button>
     </form>
+
+    <!-- Cancel button: if the post is not yet saved, redirect to the post list -->
     <a href="{% url 'post-list' %}" class="btn btn-link">Cancel</a>
 {% endblock %}

@@ -1,7 +1,22 @@
-<!-- comment_form.html -->
-<h2>Add a Comment</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Post Comment</button>
-</form>
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Comment
+from .forms import CommentForm
+
+def comment_edit_or_add(request, comment_id=None):
+    if comment_id:
+        # Edit an existing comment
+        comment = get_object_or_404(Comment, id=comment_id)
+        form = CommentForm(request.POST or None, instance=comment)
+    else:
+        # Add a new comment
+        form = CommentForm(request.POST or None)
+
+    if form.is_valid():
+        new_comment = form.save(commit=False)
+        if not comment_id:
+            new_comment.author = request.user  # Set the author to the current user
+            new_comment.post = get_object_or_404(Post, pk=request.POST['post_id'])  # Assuming post_id is passed
+        new_comment.save()
+        return redirect('post-detail', pk=new_comment.post.pk)
+
+    return render(request, 'comment_form.html', {'form': form, 'object': comment if comment_id else None})

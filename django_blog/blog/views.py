@@ -10,22 +10,28 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.db.models import Q
+from django.core.paginator import Paginator
 
 
 # Register View - User Registration
 def register(request):
     if request.method == 'POST':
+        print(request.POST)  # Debug: Print the posted data
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
+            print("Form is valid")  # Debug: Check if form validation passes
             form.save()
             messages.success(request, 'Account created successfully. You can now log in!')
-            return redirect('login')  # Redirect to the login page after successful registration
+            return redirect('login')
         else:
-            messages.error(request, 'Error creating account. Please try again.')
+            messages.error(request, f'Error creating account: {form.errors}')
+
+            print(form.errors)  # Debug: Print form errors
+    
     else:
         form = CustomUserCreationForm()
-    
     return render(request, 'blog/register.html', {'form': form})
+
 
 # Login View - User Login
 def user_login(request):
@@ -66,34 +72,44 @@ def profile(request):
 # Home View - Displaying the list of posts with pagination
 def home(request):
     posts = Post.objects.all().order_by('-created_at')
+    
+    paginator = Paginator(posts, 5)  
+    page_number = request.GET.get('page') 
+    page_obj = paginator.get_page(page_number)  # Get the page object for that page
+    
     context = {
-        'posts': posts
+        'page_obj': page_obj  # Pass the page object to the template
     }
+    
     return render(request, 'blog/home.html', context)
 
 # ListView - Display all blog posts
-class PostListView(ListView):
+class PostListView(LoginRequiredMixin, ListView):
     model = Post
-    template_name = 'blog/post_list.html'  # Template for listing posts
+    template_name = 'my_posts.html'
     context_object_name = 'posts'
-    ordering = ['-created_at']  # Order by most recent
-    paginate_by = 10  # Pagination: show 10 posts per page
 
+    def get_queryset(self):
+        # Return posts written by the logged-in user
+        return Post.objects.filter(author=self.request.user)
+    
+    
 # DetailView - Display a single blog post
 class PostDetailView(DetailView):
     model = Post
-    template_name = 'blog/post_detail.html'  # Template for viewing a post
+    template_name = 'blog/post_detail.html' 
+    context_object_name = 'post' 
 
 # CreateView - Allow authenticated users to create a new post
-class PostCreateView(LoginRequiredMixin, CreateView):
+class PostCreateView(CreateView):
     model = Post
-    template_name = 'blog/post_form.html'  # Template for creating a post
-    fields = ['title', 'content']
+    fields = ['title', 'content', 'image', 'tags']
+    template_name = 'blog/post_form.html'
 
-    def form_valid(self, form):
-        form.instance.author = self.request.user  # Set the logged-in user as the author
-        return super().form_valid(form)
-
+    # Redirect to post-detail after successful form submission
+    def get_success_url(self):
+        return reverse_lazy('post-detail', kwargs={'pk': self.object.pk})
+    
 # UpdateView - Allow post authors to edit their posts
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
@@ -122,21 +138,24 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 # View for displaying post details with comments
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    comments = post.comments.all()  # Retrieve all comments related to this post
-    if request.method == 'POST' and request.user.is_authenticated:
+    comments = post.comments.all()  # Fetch all comments related to the post
+    
+    if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
-            comment = form.save(commit=False)
-            comment.post = post
-            comment.author = request.user
-            comment.save()
-            messages.success(request, 'Your comment has been added!')
-            return redirect('post-detail', pk=post.pk)  # Redirect back to the post detail page
+            new_comment = form.save(commit=False)
+            new_comment.post = post
+            new_comment.author = request.user
+            new_comment.save()
+            return redirect('post-detail', pk=post.pk)
     else:
         form = CommentForm()
 
-    return render(request, 'blog/post_detail.html', {'post': post, 'comments': comments, 'form': form})
-
+    return render(request, 'post_detail.html', {
+        'post': post,
+        'comments': comments,
+        'form': form,
+    })
 # CommentCreateView - Class-based view to create a new comment
 class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Comment
@@ -175,15 +194,16 @@ class CommentUpdateView(LoginRequiredMixin, UpdateView):
 class CommentDeleteView(LoginRequiredMixin, DeleteView):
     model = Comment
     template_name = 'blog/comment_confirm_delete.html'
-
+    
+    # Restrict the deletion to the comment's author only
     def get_queryset(self):
         queryset = super().get_queryset()
-        return queryset.filter(author=self.request.user)  # Only allow the author to delete the comment
+        return queryset.filter(author=self.request.user)
 
+    # Redirect to the post detail page after deletion
     def get_success_url(self):
         messages.success(self.request, 'Your comment has been deleted!')
         return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
-
 
 class PostCreateView(CreateView):
     model = Post

@@ -5,15 +5,40 @@
 {% block content %}
     <h2>Latest Blog Posts</h2>
     <div class="post-list">
-        {% for post in posts %}
-            <div class="post-item">
-                <h3><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h3>
-                <p class="post-meta">Published on {{ post.published_date|date:"F j, Y" }} by {{ post.author.username }}</p>
-                <p>{{ post.content|truncatewords:30 }}</p>
-                <a href="{% url 'post_detail' post.id %}">Read more...</a>
+        {% for post in page_obj %}
+            <div class="post-card">
+                <div class="post-card-image">
+                    {% if post.image %}
+                        <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                    {% endif %}
+                </div>
+                <div class="post-card-content">
+                    <h3><a href="{% url 'post-detail' pk=post.pk %}">{{ post.title }}</a></h3>
+                    <p class="post-meta">Published on {{ post.published_date|date:"F j, Y" }} by {{ post.author.username }}</p>
+                    <p>{{ post.content|truncatewords:30 }}</p>
+                    <a href="{% url 'post-detail' pk=post.pk %}">Read more...</a>
+                </div>
             </div>
         {% empty %}
             <p>No posts available at the moment.</p>
         {% endfor %}
+    </div>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
     </div>
 {% endblock %}

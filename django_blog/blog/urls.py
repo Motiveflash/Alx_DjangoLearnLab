@@ -1,10 +1,12 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib.auth.views import LoginView, LogoutView
 from . import views
 
 urlpatterns = [
     # Home page for blog (ListView of posts)
-    path('', views.PostListView.as_view(), name='post-list'),  # List of posts at root
+    path('', views.PostListView.as_view(), name='posts'),  # List of posts at root
     
     path('home/', views.home, name='home'),  
     
@@ -16,7 +18,8 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     
     # Blog Post CRUD Views
-    path('post/<int:pk>/', views.PostDetailView.as_view(), name='post-detail'),  # View single post
+   path('post/<int:pk>/', views.PostDetailView.as_view(), name='post-detail'),  # View single post
+    path('posts/', views.PostListView.as_view(), name='post-list'),
     path('post/new/', views.PostCreateView.as_view(), name='post-create'),  # Create new post
     path('post/<int:pk>/update/', views.PostUpdateView.as_view(), name='post-update'),  # Edit post
     path('post/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post-delete'),  # Delete post
@@ -32,3 +35,6 @@ urlpatterns = [
     # Add the URL pattern for filtering posts by tags
     path('tags/<slug:tag_slug>/', views.PostByTagListView.as_view(), name='post_by_tag'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

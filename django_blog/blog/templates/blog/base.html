@@ -13,14 +13,14 @@
 <body>
     <!-- Header Section: Navigation Bar -->
     <header>
-        <nav>
+        <nav class="container">
             <div class="logo">
                 <h1><a href="{% url 'home' %}">Django Blog</a></h1>
             </div>
             <ul>
-                <li><a href="{% url 'home' %}">Home</a></li>
-                <li><a href="{% url 'posts' %}">Blog Posts</a></li>
+                <li><a href="{% url 'home' %}">Blogs</a></li>
                 {% if user.is_authenticated %}
+                    <li><a href="{% url 'posts' %}">My Posts</a></li>
                     <li><a href="{% url 'profile' %}">Profile</a></li>
                     <li><a href="{% url 'logout' %}">Logout</a></li>
                 {% else %}
@@ -32,26 +32,34 @@
     </header>
 
     <!-- Main Content Section -->
-    <div class="content">
-        {% block content %}
-        <!-- Page-specific content goes here -->
-        {% endblock %}
+
+    <div class="container">
+
+        <!-- Message Display Section -->
+        <div class="messages">
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="content">
+            {% block content %}
+            <!-- Page-specific content goes here -->
+            {% endblock %}
+        </div>
+    
     </div>
 
-    <!-- Message Display Section -->
-    <div class="messages">
-        {% for message in messages %}
-            <div class="message {{ message.tags }}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
-
+ 
     <!-- Footer Section -->
     <footer>
-        <p>&copy; 2024 Django Blog. All Rights Reserved.</p>
-        <p>Built with Django, for learning purposes.</p>
-        <p><a href="{% url 'privacy' %}">Privacy Policy</a> | <a href="{% url 'terms' %}">Terms of Service</a></p>
+        <div class="footer-wrapper">
+            <p>&copy; 2024 Django Blog. All Rights Reserved.</p>
+            <p>Built with Django, for learning purposes.</p>
+            <p>Build and maintaind by <strong>Tawab Lukumuah Baah</strong></p>
+        </div>
     </footer>
 
     <script src="{% static 'js/scripts.js' %}"></script>

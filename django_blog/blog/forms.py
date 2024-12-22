@@ -31,7 +31,7 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ['title', 'content', 'tags'] 
+        fields = ['image','title', 'content', 'tags'] 
 
     # Define the widgets for each field, including the 'tags' field
     widgets = {

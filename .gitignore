@@ -5,6 +5,8 @@ blog-env/
 advancedApienv/
 apienv
 apienv/
+social-env/
+social-env
 __pycache__/
 *.py[cod]
 *$py.class
